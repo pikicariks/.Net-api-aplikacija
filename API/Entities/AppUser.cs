@@ -1,9 +1,10 @@
-namespace API.Entities
-{
-    public class AppUser
-    {
-        public int Id { get; set; }
+﻿namespace API.Entities;
 
-        public string UserName { get; set; }
-    }
+public class AppUser
+{
+    public int Id { get; set; }
+
+    public required string UserName { get; set; }
+    
+    
 }
