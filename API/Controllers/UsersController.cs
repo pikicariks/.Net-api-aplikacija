@@ -1,5 +1,8 @@
 ﻿using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Intefaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,19 +10,21 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 
-public class UsersController(DataContext ctx) : BaseApiController
+[Authorize]
+public class UsersController(IUserRepository userRepo) : BaseApiController
 {
-    [AllowAnonymous]
+   
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
-        var users = await ctx.Users.ToListAsync();
+    public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers(){
+        var users = await userRepo.GetMembers();
 
-        return users;
+
+        return Ok(users);
     }
-    [Authorize]
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AppUser>> GetUsers(int id){
-        var user =await ctx.Users.FindAsync(id);
+    
+    [HttpGet("{username}")]
+    public async Task<ActionResult<MemberDTO>> GetUsers(string username){
+        var user =await userRepo.GetMemberAsync(username);
 
         if (user==null) return NotFound();
         
