@@ -5,12 +5,13 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Intefaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext ctx,ITokenService tokenService):BaseApiController
+public class AccountController(DataContext ctx,ITokenService tokenService,IMapper mapper):BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO){
@@ -20,29 +21,32 @@ public class AccountController(DataContext ctx,ITokenService tokenService):BaseA
             return BadRequest("Username is taken");
         }
 
-        return Ok();
-       /*  using var hmac=new HMACSHA512();
+      
+        using var hmac=new HMACSHA512();
 
-        var user = new AppUser{
-            UserName = registerDTO.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-            PasswordSalt = hmac.Key
-        };
+        var user = mapper.Map<AppUser>(registerDTO);
+
+        user.UserName = registerDTO.Username.ToLower();
+        user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
+        user.PasswordSalt = hmac.Key;
+
+       
 
         ctx.Users.Add(user);
         await ctx.SaveChangesAsync();
 
         return new UserDTO{
             Username = user.UserName,
-            Token = tokenService.CreateToken(user)
-        }; */
+            Token = tokenService.CreateToken(user),
+            KnownAs = user.KnownAs
+        }; 
     }
 
     [HttpPost("login")]
 
     public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO){
         
-    var user = await ctx.Users.FirstOrDefaultAsync(x=>x.UserName==loginDTO.Username.ToLower());
+    var user = await ctx.Users.Include(p=>p.Photos).FirstOrDefaultAsync(x=>x.UserName==loginDTO.Username.ToLower());
     
     if (user==null)
     {
@@ -59,7 +63,9 @@ public class AccountController(DataContext ctx,ITokenService tokenService):BaseA
    
    return new UserDTO{
     Username = user.UserName,
-    Token = tokenService.CreateToken(user)
+    KnownAs = user.KnownAs,
+    Token = tokenService.CreateToken(user),
+    PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
    };
    
     }
