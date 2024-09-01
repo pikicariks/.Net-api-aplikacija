@@ -3,6 +3,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Intefaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -18,8 +19,12 @@ public class UsersController(IUserRepository userRepo,IMapper map,IPhotoService 
 {
    
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers(){
-        var users = await userRepo.GetMembers();
+    public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers([FromQuery]UserParams userParams){
+       
+       userParams.CurrentUsername = User.GetUsername();
+        var users = await userRepo.GetMembers(userParams);
+
+        Response.AddPaginationHeader(users);
 
 
         return Ok(users);
