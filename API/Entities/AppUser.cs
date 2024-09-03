@@ -31,9 +31,9 @@ public class AppUser
 
     public  List<Photo> Photos {get;set;} = [];
 
-    //public int GetAge(){
-    //    return DateOfBirth.CalcAge();
-   // }
 
+    public  List<UserLike> LikedBy {get;set;} = []; 
+   
+    public  List<UserLike> Liked {get;set;} = [];
     
 }
