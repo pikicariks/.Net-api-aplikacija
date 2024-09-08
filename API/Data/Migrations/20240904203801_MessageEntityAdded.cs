@@ -28,7 +28,7 @@ namespace API.Data.Migrations
                     RecipientId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
-                {
+                {  
                     table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Messages_Users_RecipientId",
