@@ -22,7 +22,7 @@ IdentityUserToken<int>>(options)
         
 
 
-
+  base.OnModelCreating(modelBuilder);
          
 
         modelBuilder.Entity<AppUser>()
@@ -37,7 +37,7 @@ IdentityUserToken<int>>(options)
         .HasForeignKey(ur=>ur.RoleId)
         .IsRequired(); 
 
-        base.OnModelCreating(modelBuilder);
+      
 
         modelBuilder.Entity<UserLike>().HasKey(k=>new {k.SourceUserId,k.TargetUserId});
 
