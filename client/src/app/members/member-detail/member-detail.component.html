@@ -5,6 +5,12 @@
                 <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" class="card-img img-thumbnail">
                 
                 <div class="card-body">
+                    @if (presence.online().includes(member.username)) {
+                        <div class="mb-2">
+                            <i class="fa fa-user-circle text-success"></i>Online now
+                        </div>
+                    }
+                   
                     <div>
                         <strong>Location:</strong>
                         <p>{{member.city}}, {{member.country}}</p>
@@ -63,8 +69,7 @@
                     
                     <app-member-messages 
                     [username]="member.username"
-                    [messages]="messages"
-                    (upmessages)="onupdateMessages($event)"
+                    
                     ></app-member-messages>
                     
                 </tab>

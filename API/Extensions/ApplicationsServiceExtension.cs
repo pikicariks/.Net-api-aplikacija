@@ -3,6 +3,7 @@ using API.Data;
 using API.Helpers;
 using API.Intefaces;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions;
@@ -22,10 +23,13 @@ public static class ApplicationsServiceExtension
         services.AddScoped<IUserRepository,UserRepository>();
         services.AddScoped<ILikesRepository,LikesRepository>();
         services.AddScoped<IMessageRepository,MessageRepository>();
+        services.AddScoped<IUnitOfWork,UnitOfWork>();
         services.AddScoped<IPhotoService,PhotoService>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.AddScoped<LogUserActivity>();
+        services.AddSignalR();
+        services.AddSingleton<PresenceTracker>();
 
         return services;
     }
